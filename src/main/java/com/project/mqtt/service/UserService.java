@@ -134,25 +134,38 @@ public class UserService {
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail().toLowerCase());
         }
-        user.setImageUrl(userDTO.getImageUrl());
+//        user.setImageUrl(userDTO.getImageUrl());
         if (userDTO.getLangKey() == null) {
             user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
         } else {
             user.setLangKey(userDTO.getLangKey());
         }
-        String encryptedPassword = passwordEncoder.encode(RandomUtil.generatePassword());
+        String encryptedPassword = passwordEncoder.encode("123456aA@");
         user.setPassword(encryptedPassword);
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
         user.setActivated(true);
-        if (userDTO.getAuthorities() != null) {
-            Set<Authority> authorities = userDTO.getAuthorities().stream()
-                .map(authorityRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
-            user.setAuthorities(authorities);
+        Set<String> authoritiesSample = new HashSet<>();
+        authoritiesSample.add("ROLE_USER");
+        authoritiesSample.add("ROLE_ADMIN");
+        Set<Authority> authorities = authoritiesSample.stream()
+            .map(authority -> {
+                Optional<Authority> authorityOptional = authorityRepository.findById(authority);
+                if (!authorityOptional.isPresent()) {
+                    System.out.println("Authority not found: " + authority);
+                }
+                return authorityOptional;
+            })
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toSet());
+
+        if (authorities.isEmpty()) {
+            System.out.println("No authorities found.");
+        } else {
+            System.out.println("Authorities found: " + authorities);
         }
+        user.setAuthorities(authorities);
         userRepository.save(user);
         log.debug("Created Information for User: {}", user);
         return user;
@@ -277,5 +290,17 @@ public class UserService {
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
     }
+
+    public void resetPassword(String login) {
+        userRepository.findOneByLogin(login).ifPresent(user -> {
+            String encryptedPassword = passwordEncoder.encode("Abcd123!");
+            user.setPassword(encryptedPassword);
+            userRepository.save(user);
+            log.debug("Reset password User: {}", user);
+        });
+    }
+
+
+
 
 }

@@ -32,6 +32,17 @@ public class Scenario implements Serializable {
     @Column(name = "start_time")
     private Timestamp startTime;
 
+    @Column(name = "entity_id")
+    private String entityId;
+
+    public String getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(String entityId) {
+        this.entityId = entityId;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;

@@ -20,6 +20,16 @@ public class ScenarioDTO implements Serializable {
 
     private Timestamp startTime;
 
+    private String entityId;
+
+    public String getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(String entityId) {
+        this.entityId = entityId;
+    }
+
     public List<ActionDTO> getAction() {
         return action;
     }

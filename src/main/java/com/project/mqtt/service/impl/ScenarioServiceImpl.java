@@ -65,18 +65,18 @@ public class ScenarioServiceImpl implements ScenarioService {
         scenarioDTO.setStartTime(scenarioDTO.getStartTime());
         Scenario scenario = scenarioMapper.toEntity(scenarioDTO);
         scenario = scenarioRepository.save(scenario);
-        if(scenarioDTO.getAction().size() > 0 || scenarioDTO.getAction() != null){
-            Long sceId = scenario.getId();
-            List<Action> actionDTOList = scenarioDTO.getAction().stream().map(e ->{
-                Action action = new Action();
-                action.setScenarioId(sceId);
-                action.setEntityId(e.getEntityId());
-                action.setPayload(e.getPayload());
-                action.setOrderType(e.getOrderType());
-                return action;
-            }).collect(Collectors.toList());
-            actionRepository.saveAll(actionDTOList);
-        }
+//        if(scenarioDTO.getAction().size() > 0 || scenarioDTO.getAction() != null){
+//            Long sceId = scenario.getId();
+//            List<Action> actionDTOList = scenarioDTO.getAction().stream().map(e ->{
+//                Action action = new Action();
+//                action.setScenarioId(sceId);
+//                action.setEntityId(e.getEntityId());
+//                action.setPayload(e.getPayload());
+//                action.setOrderType(e.getOrderType());
+//                return action;
+//            }).collect(Collectors.toList());
+//            actionRepository.saveAll(actionDTOList);
+//        }
         return scenarioMapper.toDto(scenario);
     }
 
@@ -130,6 +130,7 @@ public class ScenarioServiceImpl implements ScenarioService {
     public void delete(Long id) {
         log.debug("Request to delete Scenario : {}", id);
         scenarioRepository.deleteById(id);
+        actionRepository.deleteAllByScenarioId(id);
     }
 
     @Override
