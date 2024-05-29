@@ -1,5 +1,7 @@
 package com.project.mqtt.security;
 
+import com.project.mqtt.domain.User;
+import com.project.mqtt.service.dto.UserDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -26,6 +28,21 @@ public final class SecurityUtils {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
     }
+
+
+    public static Optional<Long> getCurrentUserId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        if (securityContext.getAuthentication().getPrincipal() instanceof String) {
+            return Optional.empty();
+        }
+        User customUserDetails = (User) securityContext.getAuthentication().getPrincipal();
+        if (customUserDetails != null) {
+                return Optional.of(customUserDetails.getId());
+
+        }
+        return Optional.empty();
+    }
+
 
     private static String extractPrincipal(Authentication authentication) {
         if (authentication == null) {
