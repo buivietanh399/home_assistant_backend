@@ -293,14 +293,14 @@ public class UserService {
 
     public void resetPassword(String login) {
         userRepository.findOneByLogin(login).ifPresent(user -> {
-            String encryptedPassword = passwordEncoder.encode("Abcd123!");
+            String encryptedPassword = passwordEncoder.encode("123456aA@");
             user.setPassword(encryptedPassword);
             userRepository.save(user);
             log.debug("Reset password User: {}", user);
         });
     }
 
-
-
-
+    public List<User> findAll() {
+         return  userRepository.findAll();
+    }
 }

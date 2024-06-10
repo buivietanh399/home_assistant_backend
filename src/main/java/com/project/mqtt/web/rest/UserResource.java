@@ -6,7 +6,9 @@ import com.project.mqtt.repository.UserRepository;
 import com.project.mqtt.security.AuthoritiesConstants;
 import com.project.mqtt.service.MailService;
 import org.springframework.data.domain.Sort;
+
 import java.util.Collections;
+
 import com.project.mqtt.service.UserService;
 import com.project.mqtt.service.dto.UserDTO;
 import com.project.mqtt.web.rest.errors.BadRequestAlertException;
@@ -89,7 +91,7 @@ public class UserResource {
      *
      * @param userDTO the user to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new user, or with status {@code 400 (Bad Request)} if the login or email is already in use.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @throws URISyntaxException       if the Location URI syntax is incorrect.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
      */
     @PostMapping("/users")
@@ -108,9 +110,14 @@ public class UserResource {
             User newUser = userService.createUser(userDTO);
 //            mailService.sendCreationEmail(newUser);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-                .headers(HeaderUtil.createAlert(applicationName,  "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
+                .headers(HeaderUtil.createAlert(applicationName, "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
                 .body(newUser);
         }
+    }
+
+    @GetMapping("/get-users")
+    public ResponseEntity<List<User>> getAllUser() throws URISyntaxException {
+        return ResponseEntity.ok().body(userService.findAll());
     }
 
     /**
@@ -162,6 +169,7 @@ public class UserResource {
 
     /**
      * Gets a list of all roles.
+     *
      * @return a string list of all roles.
      */
     @GetMapping("/users/authorities")
@@ -195,14 +203,13 @@ public class UserResource {
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
-        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "A user is deleted with identifier " + login, login)).build();
+        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "A user is deleted with identifier " + login, login)).build();
     }
 
-    @PostMapping("/users/{login:" + Constants.LOGIN_REGEX + "}/reset-password")
-    public ResponseEntity<Void> resetPasswordUser(@PathVariable String login) {
+    @PostMapping("/users/reset-password/{login:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<Object> resetPasswordUser(@PathVariable String login) {
         log.debug("REST request to reset password User: {}", login);
         userService.resetPassword(login);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert(applicationName,  "reset password " + login, login)).build();
+        return ResponseEntity.ok().body(new User());
     }
-
 }
