@@ -11,7 +11,7 @@ import java.time.Instant;
  * A Scenario.
  */
 @Entity
-@Table(name = "scenario")
+@Table(name = "jhi_scenario")
 public class Scenario implements Serializable {
 
     private static final long serialVersionUID = 1L;

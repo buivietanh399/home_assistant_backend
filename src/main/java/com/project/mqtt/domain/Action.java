@@ -9,7 +9,7 @@ import java.io.Serializable;
  * A Action.
  */
 @Entity
-@Table(name = "action")
+@Table(name = "jhi_action")
 public class Action implements Serializable {
 
     private static final long serialVersionUID = 1L;
